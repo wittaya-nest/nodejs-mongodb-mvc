@@ -1,6 +1,9 @@
 const express = require('express')
 const path = require('path')
 const exphbs = require('express-handlebars')
+const morgan = require('morgan')
+const compression = require('compression')
+const bodyParser = require('body-parser')
 const methodOverride = require('method-override')
 const session = require('express-session')
 const flash = require('connect-flash')
@@ -25,7 +28,15 @@ app.engine('.hbs', exphbs({
 }))
 app.set('view engine', '.hbs')
 //Middlewares
-app.use(express.urlencoded({extended: false}))
+if(process.env.NODE_ENV === 'development'){
+    app.use(morgan('dev'))
+}else{
+    app.use(compression())
+}
+app.use(bodyParser.urlencoded({
+    extended: true
+}))
+app.use(bodyParser.json())
 app.use(methodOverride('_method'))
 app.use(session({
     secret: 'mysecretapp',
@@ -43,12 +54,11 @@ app.use(function(req, res, next){
     res.locals.user = req.user || null
     next()
 })
-//Static Files
-app.use(express.static(path.join(__dirname, '../../public')))
-
 //routes
 require('../../app/routes/route.index')(app)
 require('../../app/routes/route.notes')(app)
 require('../../app/routes/route.users')(app)
+//Static Files
+app.use(express.static(path.join(__dirname, '../../public')))
 return app
 }

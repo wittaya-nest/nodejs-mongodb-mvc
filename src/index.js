@@ -1,3 +1,5 @@
+process.env.NODE_ENV = process.env.NODE_ENV || 'development'
+
 const express = require('./config/strategies/express')
 
 const app = express()

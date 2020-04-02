@@ -21,7 +21,6 @@ function compare(req, password, done){
         user.comparePassword(password, function(err, isMatch) {
             if (err) throw (err)
             if(isMatch) {
-                console.log('match')
                 return done(null, user, req.flash('success_msg', 'Welcome  ' + user.name))
             }else{
                 return done(null, false, req.flash('error', 'Incorrect Password'))
